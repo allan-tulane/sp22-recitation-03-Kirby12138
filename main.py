@@ -18,6 +18,28 @@ class BinaryNumber:
 ## ensure that x, y are appropriately sized binary vectors for a
 ## divide and conquer approach.
 
+def _quadratic_multiply(x, y):
+    xvec = x.binary_vec
+    yvec = y.binary_vec
+
+    
+    if x.decimal_val <= 1 and y.decimal_val <= 1:
+        return BinaryNumber(x.decimal_val * y.decimal_val)
+    
+    xvec, yvec = pad(xvec,yvec)
+
+    n = len(xvec)
+
+
+    x_left, x_right = split_number(xvec)
+    y_left, y_right = split_number(yvec)
+        
+    return BinaryNumber(bit_shift(_quadratic_multiply(x_left,y_left) ,n).decimal_val
+    + bit_shift( BinaryNumber(_quadratic_multiply(x_left,y_right).decimal_val +  _quadratic_multiply(x_right, y_left).decimal_val) , n//2).decimal_val
+    + _quadratic_multiply(x_right,y_right).decimal_val)      
+        
+    
+
 def binary2int(binary_vec): 
     if len(binary_vec) == 0:
         return BinaryNumber(0)
@@ -46,20 +68,28 @@ def pad(x,y):
 
 def quadratic_multiply(x, y):
     ### TODO
-    pass
-    ###
+    return _quadratic_multiply(x,y).decimal_val
+
 
 
 
 ## Feel free to add your own tests here.
 def test_multiply():
     assert quadratic_multiply(BinaryNumber(2), BinaryNumber(2)) == 2*2
+    print(quadratic_multiply(BinaryNumber(2), BinaryNumber(2)))
+    print(quadratic_multiply(BinaryNumber(4), BinaryNumber(5)))
+    assert quadratic_multiply(BinaryNumber(4), BinaryNumber(5)) == 4*5
+    assert quadratic_multiply(BinaryNumber(1000), BinaryNumber(25)) == 1000*25
+    assert quadratic_multiply(BinaryNumber(13), BinaryNumber(17)) == 13*17
     
     
 def time_multiply(x, y, f):
     start = time.time()
     # multiply two numbers x, y using function f
     return (time.time() - start)*1000
+
+if __name__ == "__main__":
+    test_multiply()
 
 
     
